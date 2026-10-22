@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Price Chart{% endblock %}
+
+{% block content %}
+  <section class="page-header">
+    <h1>Price Chart</h1>
+    <p>MSFT price trend with 50-day and 200-day moving averages, plus buy/sell markers.</p>
+  </section>
+
+  <div class="card chart-card">
+    <canvas id="priceChart" height="120"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const chartData = {{ chart_data | tojson }};
+
+    const dates = chartData.dates;
+    const close = chartData.close;
+    const ma50 = chartData.ma50;
+    const ma200 = chartData.ma200;
+
+    const buyMap = {};
+    const sellMap = {};
+
+    chartData.buy_points.forEach((point) => {
+      buyMap[point.date] = point.price;
+    });
+
+    chartData.sell_points.forEach((point) => {
+      sellMap[point.date] = point.price;
+    });
+
+    const buyValues = dates.map((date) => buyMap[date] ?? null);
+    const sellValues = dates.map((date) => sellMap[date] ?? null);
+
+    const ctx = document.getElementById('priceChart');
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [
+          {
+            label: 'Price',
+            data: close,
+            borderColor: '#2563eb',
+            backgroundColor: 'rgba(37, 99, 235, 0.08)',
+            borderWidth: 2,
+            tension: 0.1,
+            fill: false,
+            pointRadius: 0
+          },
+          {
+            label: 'MA50',
+            data: ma50,
+            borderColor: '#22c55e',
+            borderWidth: 2,
+            tension: 0.1,
+            fill: false,
+            pointRadius: 0
+          },
+          {
+            label: 'MA200',
+            data: ma200,
+            borderColor: '#f59e0b',
+            borderWidth: 2,
+            tension: 0.1,
+            fill: false,
+            pointRadius: 0
+          },
+          {
+            label: 'Buy Signal',
+            data: buyValues,
+            borderColor: '#10b981',
+            backgroundColor: '#10b981',
+            pointRadius: 6,
+            pointHoverRadius: 7,
+            showLine: false,
+            pointStyle: 'circle'
+          },
+          {
+            label: 'Sell Signal',
+            data: sellValues,
+            borderColor: '#ef4444',
+            backgroundColor: '#ef4444',
+            pointRadius: 6,
+            pointHoverRadius: 7,
+            showLine: false,
+            pointStyle: 'circle'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              maxTicksLimit: 12,
+              autoSkip: true
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Price (USD)'
+            }
+          }
+        }
+      }
+    });
+  </script>
+{% endblock %}

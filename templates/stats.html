@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Trade Statistics{% endblock %}
+
+{% block content %}
+  <section class="page-header">
+    <h1>Trade Statistics</h1>
+    <p>Overall performance of the golden cross strategy.</p>
+  </section>
+
+  <div class="stats-grid">
+    <div class="card stat-card">
+      <div class="label">Total Trades</div>
+      <div class="value">{{ summary.total_trades }}</div>
+    </div>
+    <div class="card stat-card">
+      <div class="label">Winning Trades</div>
+      <div class="value">{{ summary.winning_trades }}</div>
+    </div>
+    <div class="card stat-card">
+      <div class="label">Losing Trades</div>
+      <div class="value">{{ summary.losing_trades }}</div>
+    </div>
+    <div class="card stat-card">
+      <div class="label">Win Rate</div>
+      <div class="value">{{ summary.win_rate }}%</div>
+    </div>
+    <div class="card stat-card">
+      <div class="label">Average Profit</div>
+      <div class="value">{{ summary.average_profit }}%</div>
+    </div>
+    <div class="card stat-card">
+      <div class="label">Average Holding Days</div>
+      <div class="value">{{ summary.average_holding_days }}</div>
+    </div>
+  </div>
+{% endblock %}
